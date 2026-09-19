@@ -27,6 +27,9 @@ public final class RoomView extends VBox {
     private final Button actionButton = new Button();
     private final Button backButton = new Button("← 返回主页");
     private final Button copyIdButton = new Button("复制 ID");
+    private final VBox passwordSection = new VBox(6);
+    private final TextField newPasswordField = new TextField();
+    private final Button changePasswordButton = new Button("修改密码");
     private UUID currentRoomId;
 
     public RoomView() {
@@ -47,9 +50,18 @@ public final class RoomView extends VBox {
         messageField.setPromptText("输入消息（回车发送）");
         HBox.setHgrow(messageField, javafx.scene.layout.Priority.ALWAYS);
 
+        var pwHeading = new Label("修改房间密码:");
+        pwHeading.setStyle("-fx-font-weight: bold;");
+        newPasswordField.setPromptText("输入新密码");
+        var pwBox = new HBox(8, newPasswordField, changePasswordButton);
+        passwordSection.getChildren().addAll(pwHeading, pwBox);
+        passwordSection.setStyle("-fx-border-color: #ccc; -fx-border-radius: 6; -fx-padding: 8;");
+        passwordSection.setVisible(false);
+        passwordSection.setManaged(false);
+
         var bottomBox = new HBox(8, backButton, actionButton);
 
-        getChildren().addAll(heading, infoBox, membersHeading, memberList, sendBox, bottomBox);
+        getChildren().addAll(heading, infoBox, membersHeading, memberList, sendBox, passwordSection, bottomBox);
     }
 
     public void setRoomInfo(String name, UUID id, String selfVip, int memberCount, int maxDevices, boolean isOwner) {
@@ -60,6 +72,11 @@ public final class RoomView extends VBox {
         selfVipLabel.setText("本机虚拟 IP: " + selfVip);
         capacityLabel.setText("容量: " + memberCount + " / " + maxDevices);
         actionButton.setText(isOwner ? "关闭房间" : "离开房间");
+        passwordSection.setVisible(isOwner);
+        passwordSection.setManaged(isOwner);
+        if (!isOwner) {
+            newPasswordField.clear();
+        }
     }
 
     public void setMembers(Collection<String> members, String ownerId) {
@@ -86,6 +103,17 @@ public final class RoomView extends VBox {
 
     public void onBack(Runnable handler) {
         backButton.setOnAction(e -> handler.run());
+    }
+
+    public void onChangePassword(java.util.function.Consumer<String> handler) {
+        changePasswordButton.setOnAction(e -> {
+            var newPw = newPasswordField.getText();
+            if (newPw.isEmpty()) {
+                return;
+            }
+            handler.accept(newPw);
+            newPasswordField.clear();
+        });
     }
 
     public void setupCopyIdButton() {

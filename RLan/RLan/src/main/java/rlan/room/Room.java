@@ -13,7 +13,7 @@ public final class Room {
 
     private final UUID id;
     private final String name;
-    private final String passwordHash;
+    private volatile String passwordHash;
     private final String ownerId;
     private final Set<String> members = ConcurrentHashMap.newKeySet();
 
@@ -38,6 +38,10 @@ public final class Room {
 
     public boolean verifyPassword(String input) {
         return passwordHash.equals(hash(input));
+    }
+
+    public void changePassword(String newPassword) {
+        this.passwordHash = hash(newPassword);
     }
 
     public Set<String> members() {

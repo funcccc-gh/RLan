@@ -44,6 +44,15 @@ public final class RoomManager {
         rooms.remove(id);
     }
 
+    public boolean changePassword(UUID id, String ownerId, String newPassword) {
+        var room = rooms.get(id);
+        if (room == null || !room.ownerId().equals(ownerId)) {
+            return false;
+        }
+        room.changePassword(newPassword);
+        return true;
+    }
+
     public int count() {
         return rooms.size();
     }

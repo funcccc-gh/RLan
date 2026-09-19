@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="rlan.room.RoomTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-09-19T01:11:54" hostname="JIANG" time="0.022">
+<testsuite name="rlan.room.RoomTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-09-19T01:38:21" hostname="JIANG" time="0.027">
   <properties/>
-  <testcase name="verifyPassword_错误密码返回false()" classname="rlan.room.RoomTest" time="0.003"/>
-  <testcase name="join_重复成员返回false()" classname="rlan.room.RoomTest" time="0.001"/>
-  <testcase name="hash_相同密码哈希一致()" classname="rlan.room.RoomTest" time="0.002"/>
-  <testcase name="leave_移除成员()" classname="rlan.room.RoomTest" time="0.001"/>
-  <testcase name="hash_不同密码哈希不同()" classname="rlan.room.RoomTest" time="0.002"/>
-  <testcase name="verifyPassword_正确密码返回true()" classname="rlan.room.RoomTest" time="0.001"/>
+  <testcase name="verifyPassword_错误密码返回false()" classname="rlan.room.RoomTest" time="0.002"/>
+  <testcase name="join_重复成员返回false()" classname="rlan.room.RoomTest" time="0.002"/>
+  <testcase name="hash_相同密码哈希一致()" classname="rlan.room.RoomTest" time="0.001"/>
+  <testcase name="leave_移除成员()" classname="rlan.room.RoomTest" time="0.003"/>
+  <testcase name="hash_不同密码哈希不同()" classname="rlan.room.RoomTest" time="0.004"/>
+  <testcase name="verifyPassword_正确密码返回true()" classname="rlan.room.RoomTest" time="0.002"/>
   <testcase name="isFull_达到8人时为满()" classname="rlan.room.RoomTest" time="0.002"/>
-  <testcase name="join_未满时加入成功()" classname="rlan.room.RoomTest" time="0.002"/>
+  <testcase name="join_未满时加入成功()" classname="rlan.room.RoomTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

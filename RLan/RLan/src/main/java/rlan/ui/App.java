@@ -12,6 +12,8 @@ public final class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        var roomManager = new rlan.room.RoomManager();
+        var selfId = "self";
         var session = new RoomSession();
         var sidebar = new SidebarView(session);
         var mainView = new MainView();
@@ -41,6 +43,16 @@ public final class App extends Application {
                 content.setCenter(mainView);
                 sidebar.clearSelection();
             });
+            roomView.onChangePassword(newPw -> {
+                if (isOwner) {
+                    boolean ok = roomManager.changePassword(entry.id, selfId, newPw);
+                    if (ok) {
+                        mainView.status("房间「" + entry.name + "」密码已修改");
+                    } else {
+                        mainView.status("密码修改失败");
+                    }
+                }
+            });
             content.setCenter(roomView);
         });
 
@@ -49,24 +61,24 @@ public final class App extends Application {
                 mainView.status("房间名称不能为空");
                 return;
             }
-            var id = java.util.UUID.randomUUID();
-            session.addRoom(id, req.name, RoomSession.Role.OWNER);
+            var room = roomManager.create(req.name, req.password, selfId);
+            session.addRoom(room.id(), req.name, RoomSession.Role.OWNER);
             mainView.clearCreateFields();
             mainView.status("已创建房间: " + req.name);
             var alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("房间创建成功");
             alert.setHeaderText("房间「" + req.name + "」已创建");
-            alert.setContentText("房间 ID:\n" + id + "\n\n请将此 ID 与房间密码告知其他参与者。");
+            alert.setContentText("房间 ID:\n" + room.id() + "\n\n请将此 ID 与房间密码告知其他参与者。");
             alert.showAndWait();
         });
 
         mainView.onJoinRoom(req -> {
-            var mgr = new rlan.room.RoomManager();
-            var result = mgr.join(req.roomId, req.password, "self");
+            var result = roomManager.join(req.roomId, req.password, selfId);
             if (result == rlan.room.JoinResult.SUCCESS || result == rlan.room.JoinResult.ALREADY_MEMBER) {
-                session.addRoom(req.roomId, "房间-" + req.roomId.toString().substring(0, 8), RoomSession.Role.MEMBER);
+                var room = roomManager.find(req.roomId).orElseThrow();
+                session.addRoom(req.roomId, room.name(), RoomSession.Role.MEMBER);
                 mainView.clearJoinFields();
-                mainView.status("已加入房间: " + req.roomId);
+                mainView.status("已加入房间: " + room.name());
             } else {
                 mainView.status("加入失败: " + result);
             }
