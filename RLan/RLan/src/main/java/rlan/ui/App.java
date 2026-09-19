@@ -77,7 +77,7 @@ public final class App extends Application {
             session.select(entry);
             boolean isOwner = entry.role == RoomSession.Role.OWNER;
             roomView.setRoomInfo(
-                    entry.name, entry.id, "待分配", 1, 8, isOwner);
+                    entry.name, entry.id, entry.handle, "待分配", 1, 8, isOwner);
             roomView.setMembers(java.util.List.of(entry.name), entry.name);
             roomView.setupCopyIdButton();
             roomView.onAction(() -> {
@@ -112,7 +112,7 @@ public final class App extends Application {
             String handleHost = hasPublicAddress ? finalPublicHost : lanHost;
             int handlePort = hasPublicAddress ? finalPublicPort : localPort;
             var handle = new RoomHandle(room.id(), handleHost, handlePort);
-            session.addRoom(room.id(), req.name, RoomSession.Role.OWNER);
+            session.addRoom(room.id(), req.name, RoomSession.Role.OWNER, handle.encode());
             mainView.clearCreateFields();
             mainView.status("已创建房间: " + req.name + (hasPublicAddress ? " (公网可达)" : " (仅局域网可达)"));
             var alert = new Alert(Alert.AlertType.INFORMATION);
@@ -133,7 +133,7 @@ public final class App extends Application {
             mainView.status("正在查询房间...");
             roomService.joinRoomRemote(handle, req.password, result -> Platform.runLater(() -> {
                 if (result.success) {
-                    session.addRoom(handle.id(), result.roomName, RoomSession.Role.MEMBER);
+                    session.addRoom(handle.id(), result.roomName, RoomSession.Role.MEMBER, handle.encode());
                     mainView.clearJoinFields();
                     mainView.status("已加入房间: " + result.roomName);
                 } else {

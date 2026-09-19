@@ -31,6 +31,7 @@ public final class RoomView extends VBox {
     private final TextField newPasswordField = new TextField();
     private final Button changePasswordButton = new Button("修改密码");
     private UUID currentRoomId;
+    private String currentHandle;
 
     public RoomView() {
         setSpacing(10);
@@ -64,10 +65,11 @@ public final class RoomView extends VBox {
         getChildren().addAll(heading, infoBox, membersHeading, memberList, sendBox, passwordSection, bottomBox);
     }
 
-    public void setRoomInfo(String name, UUID id, String selfVip, int memberCount, int maxDevices, boolean isOwner) {
+    public void setRoomInfo(String name, UUID id, String handle, String selfVip, int memberCount, int maxDevices, boolean isOwner) {
         this.currentRoomId = id;
+        this.currentHandle = handle;
         roomNameLabel.setText("房间名称: " + name);
-        roomIdLabel.setText("房间 ID: " + id);
+        roomIdLabel.setText("房间 ID: " + handle);
         roleLabel.setText("我的角色: " + (isOwner ? "房主 👑" : "成员"));
         selfVipLabel.setText("本机虚拟 IP: " + selfVip);
         capacityLabel.setText("容量: " + memberCount + " / " + maxDevices);
@@ -118,12 +120,12 @@ public final class RoomView extends VBox {
 
     public void setupCopyIdButton() {
         copyIdButton.setOnAction(e -> {
-            if (currentRoomId == null) {
+            if (currentHandle == null) {
                 return;
             }
             var clipboard = Clipboard.getSystemClipboard();
             var content = new ClipboardContent();
-            content.putString(currentRoomId.toString());
+            content.putString(currentHandle);
             clipboard.setContent(content);
             copyIdButton.setText("已复制 ✓");
             javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1.5));
