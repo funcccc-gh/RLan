@@ -1,8 +1,0 @@
-CMake中添加
-#utf-8
-set(CMAKE_SOURCE_FILE_ENCODING UTF-8)
-set(CMAKE_UTF8_SOURCE_FILES ON)
-#compile
-if(MINGW)
-    add_compile_options(-mwindows)
-endif()
