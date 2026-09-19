@@ -9,6 +9,9 @@ import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -20,6 +23,7 @@ public final class RoomService {
     private final ConcurrentMap<UUID, ConcurrentMap<String, InetSocketAddress>> memberAddresses = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, InetSocketAddress> ownerAddresses = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, Boolean> ownedRooms = new ConcurrentHashMap<>();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private Consumer<ChatProtocol> onChatMessage;
     private Consumer<RoomMigration> onRoomMigrated;
 
@@ -77,6 +81,12 @@ public final class RoomService {
         ownerAddresses.put(handle.id(), handle.address());
         var msg = new RoomMessage(RoomMessage.Type.JOIN_ROOM, handle.id(), null, password, selfId);
         connectionManager.send(new Packet(MessageType.JOIN, msg.encode()), handle.address());
+        scheduler.schedule(() -> {
+            var cb = pendingJoins.remove(handle.id());
+            if (cb != null) {
+                cb.accept(RemoteJoinResult.fail("查询超时：房主未响应，请检查房间 ID 和网络"));
+            }
+        }, 5, TimeUnit.SECONDS);
     }
 
     public void sendLeaveRoom(UUID roomId, InetSocketAddress target) {

@@ -24,7 +24,7 @@ public final class App extends Application {
     private static final double WIDTH = 820;
     private static final double HEIGHT = 520;
     private static final boolean PERSISTENCE_ENABLED = true;
-    private static java.awt.TrayIcon trayIcon;
+    private static volatile java.awt.TrayIcon trayIcon;
     private static Stage primaryStage;
 
     private static final InetSocketAddress[] STUN_SERVERS = {
@@ -324,12 +324,16 @@ public final class App extends Application {
             var records = roomStore.load();
             for (var record : records) {
                 try {
-                    var handle = RoomHandle.decode(record.encodedHandle, record.password);
                     if ("OWNER".equals(record.role)) {
                         var room = roomService.createRoom(record.name, record.password);
-                        session.addRoom(room.id(), record.name, RoomSession.Role.OWNER, record.encodedHandle);
+                        String handleHost = hasPublicAddress ? finalPublicHost : finalLanHost;
+                        int handlePort = hasPublicAddress ? finalPublicPort : finalLocalPort;
+                        var newHandle = new RoomHandle(room.id(), handleHost, handlePort);
+                        var encodedHandle = newHandle.encode(record.password);
+                        session.addRoom(room.id(), record.name, RoomSession.Role.OWNER, encodedHandle);
                         roomPasswords.put(room.id(), record.password);
                     } else {
+                        var handle = RoomHandle.decode(record.encodedHandle, record.password);
                         roomService.joinRoomRemote(handle, record.password, result -> Platform.runLater(() -> {
                             if (result.success) {
                                 session.addRoom(handle.id(), result.roomName, RoomSession.Role.MEMBER, record.encodedHandle);
@@ -365,45 +369,46 @@ public final class App extends Application {
         if (!java.awt.SystemTray.isSupported()) {
             return;
         }
-        removeTrayIcon();
-        var tray = java.awt.SystemTray.getSystemTray();
-        var image = createTrayImage();
-        var popup = new java.awt.PopupMenu();
-        var showItem = new java.awt.MenuItem("Show");
-        showItem.addActionListener(e -> Platform.runLater(() -> {
-            stage.show();
-            stage.setIconified(false);
-            stage.toFront();
-            stage.requestFocus();
-        }));
-        var exitItem = new java.awt.MenuItem("Exit");
-        exitItem.addActionListener(e -> Platform.runLater(() -> {
+        java.awt.EventQueue.invokeLater(() -> {
             removeTrayIcon();
-            connectionManager.close();
-            stage.close();
-            Platform.exit();
-        }));
-        popup.add(showItem);
-        popup.addSeparator();
-        popup.add(exitItem);
+            var tray = java.awt.SystemTray.getSystemTray();
+            var image = createTrayImage();
+            var popup = new java.awt.PopupMenu();
+            var showItem = new java.awt.MenuItem("Show");
+            showItem.addActionListener(e -> Platform.runLater(() -> {
+                stage.show();
+                stage.setIconified(false);
+                stage.toFront();
+                stage.requestFocus();
+            }));
+            var exitItem = new java.awt.MenuItem("Exit");
+            exitItem.addActionListener(e -> Platform.runLater(() -> {
+                removeTrayIcon();
+                connectionManager.close();
+                Platform.exit();
+            }));
+            popup.add(showItem);
+            popup.addSeparator();
+            popup.add(exitItem);
 
-        trayIcon = new java.awt.TrayIcon(image, "RLan", popup);
-        trayIcon.setImageAutoSize(true);
-        trayIcon.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mousePressed(java.awt.event.MouseEvent e) {
-                Platform.runLater(() -> {
-                    stage.show();
-                    stage.setIconified(false);
-                    stage.toFront();
-                    stage.requestFocus();
-                });
+            trayIcon = new java.awt.TrayIcon(image, "RLan", popup);
+            trayIcon.setImageAutoSize(true);
+            trayIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mousePressed(java.awt.event.MouseEvent e) {
+                    Platform.runLater(() -> {
+                        stage.show();
+                        stage.setIconified(false);
+                        stage.toFront();
+                        stage.requestFocus();
+                    });
+                }
+            });
+            try {
+                tray.add(trayIcon);
+            } catch (java.awt.AWTException ignored) {
             }
         });
-        try {
-            tray.add(trayIcon);
-        } catch (java.awt.AWTException ignored) {
-        }
     }
 
     private static void removeTrayIcon() {
