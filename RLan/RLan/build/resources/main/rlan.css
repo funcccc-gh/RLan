@@ -27,4 +27,18 @@
 .list-view {
     -fx-border-color: #ccc;
     -fx-border-radius: 4;
+    -fx-background-color: #fff;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #4a90d9;
+    -fx-text-fill: white;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #e0eefc;
+}
+
+.sidebar {
+    -fx-background-color: #ececec;
 }

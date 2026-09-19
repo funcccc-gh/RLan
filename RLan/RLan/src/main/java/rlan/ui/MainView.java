@@ -100,6 +100,16 @@ public final class MainView extends VBox {
         statusLabel.setText(text);
     }
 
+    public void clearCreateFields() {
+        roomNameField.clear();
+        createPasswordField.clear();
+    }
+
+    public void clearJoinFields() {
+        joinIdField.clear();
+        joinPasswordField.clear();
+    }
+
     public void onCreateRoom(Consumer<RoomRequest> handler) {
         this.onCreateRoom = handler;
     }

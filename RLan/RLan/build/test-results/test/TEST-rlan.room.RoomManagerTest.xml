@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="rlan.room.RoomManagerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-19T00:28:05" hostname="JIANG" time="0.042">
+<testsuite name="rlan.room.RoomManagerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-19T01:11:54" hostname="JIANG" time="0.084">
   <properties/>
-  <testcase name="close_移除房间()" classname="rlan.room.RoomManagerTest" time="0.009"/>
-  <testcase name="join_房间满返回ROOM_FULL()" classname="rlan.room.RoomManagerTest" time="0.015"/>
-  <testcase name="join_房间不存在返回ROOM_NOT_FOUND()" classname="rlan.room.RoomManagerTest" time="0.001"/>
-  <testcase name="create_房主自动入房()" classname="rlan.room.RoomManagerTest" time="0.01"/>
-  <testcase name="join_错误密码返回WRONG_PASSWORD()" classname="rlan.room.RoomManagerTest" time="0.002"/>
-  <testcase name="join_正确密码加入成功()" classname="rlan.room.RoomManagerTest" time="0.002"/>
+  <testcase name="close_移除房间()" classname="rlan.room.RoomManagerTest" time="0.022"/>
+  <testcase name="join_房间满返回ROOM_FULL()" classname="rlan.room.RoomManagerTest" time="0.036"/>
+  <testcase name="join_房间不存在返回ROOM_NOT_FOUND()" classname="rlan.room.RoomManagerTest" time="0.002"/>
+  <testcase name="create_房主自动入房()" classname="rlan.room.RoomManagerTest" time="0.014"/>
+  <testcase name="join_错误密码返回WRONG_PASSWORD()" classname="rlan.room.RoomManagerTest" time="0.003"/>
+  <testcase name="join_正确密码加入成功()" classname="rlan.room.RoomManagerTest" time="0.003"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

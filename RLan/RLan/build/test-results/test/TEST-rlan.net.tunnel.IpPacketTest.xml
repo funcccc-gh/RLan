@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="rlan.net.tunnel.IpPacketTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-19T00:28:05" hostname="JIANG" time="0.067">
+<testsuite name="rlan.net.tunnel.IpPacketTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-19T01:11:54" hostname="JIANG" time="0.151">
   <properties/>
-  <testcase name="source和Destination_解析IPv4地址()" classname="rlan.net.tunnel.IpPacketTest" time="0.057"/>
-  <testcase name="totalLength_解析IPv4总长度()" classname="rlan.net.tunnel.IpPacketTest" time="0.003"/>
+  <testcase name="source和Destination_解析IPv4地址()" classname="rlan.net.tunnel.IpPacketTest" time="0.13"/>
+  <testcase name="totalLength_解析IPv4总长度()" classname="rlan.net.tunnel.IpPacketTest" time="0.006"/>
   <testcase name="headerLength_解析IPv4头长度()" classname="rlan.net.tunnel.IpPacketTest" time="0.001"/>
   <testcase name="version_解析IPv4包()" classname="rlan.net.tunnel.IpPacketTest" time="0.001"/>
-  <testcase name="version_解析IPv6包()" classname="rlan.net.tunnel.IpPacketTest" time="0.001"/>
+  <testcase name="version_解析IPv6包()" classname="rlan.net.tunnel.IpPacketTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
