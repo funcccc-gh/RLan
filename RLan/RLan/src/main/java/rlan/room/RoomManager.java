@@ -8,9 +8,10 @@ import java.util.concurrent.ConcurrentMap;
 public final class RoomManager {
     private final ConcurrentMap<UUID, Room> rooms = new ConcurrentHashMap<>();
 
-    public Room create(String name, String password) {
-        var room = new Room(UUID.randomUUID(), name, password);
+    public Room create(String name, String password, String ownerId) {
+        var room = new Room(UUID.randomUUID(), name, Room.hash(password), ownerId);
         rooms.put(room.id(), room);
+        room.join(ownerId);
         return room;
     }
 
@@ -18,15 +19,32 @@ public final class RoomManager {
         return Optional.ofNullable(rooms.get(id));
     }
 
-    public boolean join(UUID id, String password, String memberId) {
+    public JoinResult join(UUID id, String password, String memberId) {
         var room = rooms.get(id);
-        if (room == null || !room.verifyPassword(password)) {
-            return false;
+        if (room == null) {
+            return JoinResult.ROOM_NOT_FOUND;
         }
-        return room.join(memberId);
+        if (!room.verifyPassword(password)) {
+            return JoinResult.WRONG_PASSWORD;
+        }
+        if (room.isFull()) {
+            return JoinResult.ROOM_FULL;
+        }
+        return room.join(memberId) ? JoinResult.SUCCESS : JoinResult.ALREADY_MEMBER;
+    }
+
+    public void leave(UUID id, String memberId) {
+        var room = rooms.get(id);
+        if (room != null) {
+            room.leave(memberId);
+        }
     }
 
     public void close(UUID id) {
         rooms.remove(id);
+    }
+
+    public int count() {
+        return rooms.size();
     }
 }

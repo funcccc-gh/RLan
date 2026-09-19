@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="rlan.net.tunnel.VirtualLanTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-19T00:28:05" hostname="JIANG" time="0.014">
+  <properties/>
+  <testcase name="allocate_不同成员不同IP()" classname="rlan.net.tunnel.VirtualLanTest" time="0.006"/>
+  <testcase name="allocate_同一成员返回相同IP()" classname="rlan.net.tunnel.VirtualLanTest" time="0.0"/>
+  <testcase name="release_移除成员映射()" classname="rlan.net.tunnel.VirtualLanTest" time="0.001"/>
+  <testcase name="allocate_为成员分配虚拟IP()" classname="rlan.net.tunnel.VirtualLanTest" time="0.001"/>
+  <testcase name="ipv6Subnet_创建IPv6子网()" classname="rlan.net.tunnel.VirtualLanTest" time="0.0"/>
+  <testcase name="bind和resolve_映射虚拟IP到物理地址()" classname="rlan.net.tunnel.VirtualLanTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

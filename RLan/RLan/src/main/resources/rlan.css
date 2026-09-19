@@ -1,0 +1,30 @@
+.root {
+    -fx-background-color: #f9f9f9;
+    -fx-font-size: 13px;
+}
+
+.label {
+    -fx-text-fill: #333;
+}
+
+.button {
+    -fx-background-color: #4a90d9;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #357abd;
+}
+
+.text-field {
+    -fx-background-radius: 4;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 4;
+}
+
+.list-view {
+    -fx-border-color: #ccc;
+    -fx-border-radius: 4;
+}
