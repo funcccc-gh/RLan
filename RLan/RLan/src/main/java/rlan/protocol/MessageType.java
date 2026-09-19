@@ -5,5 +5,7 @@ public enum MessageType {
     LEAVE,
     ROOM_LIST,
     DATA,
-    KEEPALIVE
+    KEEPALIVE,
+    CHAT,
+    FILE
 }
