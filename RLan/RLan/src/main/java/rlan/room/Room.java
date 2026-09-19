@@ -16,12 +16,18 @@ public final class Room {
     private volatile String passwordHash;
     private final String ownerId;
     private final Set<String> members = ConcurrentHashMap.newKeySet();
+    private final long createdAt;
 
     public Room(UUID id, String name, String passwordHash, String ownerId) {
+        this(id, name, passwordHash, ownerId, System.currentTimeMillis());
+    }
+
+    public Room(UUID id, String name, String passwordHash, String ownerId, long createdAt) {
         this.id = id;
         this.name = name;
         this.passwordHash = passwordHash;
         this.ownerId = ownerId;
+        this.createdAt = createdAt;
     }
 
     public UUID id() {
@@ -34,6 +40,14 @@ public final class Room {
 
     public String ownerId() {
         return ownerId;
+    }
+
+    public long createdAt() {
+        return createdAt;
+    }
+
+    public boolean hasPassword() {
+        return passwordHash != null && !passwordHash.isEmpty();
     }
 
     public boolean verifyPassword(String input) {

@@ -9,23 +9,31 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.UUID;
 
 public final class RoomView extends VBox {
     private final Label roomNameLabel = new Label();
     private final Label roomIdLabel = new Label();
-    private final Label selfVipLabel = new Label();
-    private final Label capacityLabel = new Label();
     private final Label roleLabel = new Label();
+    private final Label createdAtLabel = new Label();
+    private final Label capacityLabel = new Label();
+    private final Label lanIpLabel = new Label();
+    private final Label localPortLabel = new Label();
+    private final Label publicAddrLabel = new Label();
+    private final Label natTypeLabel = new Label();
+    private final Label reachabilityLabel = new Label();
     private final ObservableList<String> memberItems = FXCollections.observableArrayList();
     private final ListView<String> memberList = new ListView<>(memberItems);
-    private final TextField messageField = new TextField();
     private final Button actionButton = new Button();
-    private final Button backButton = new Button("← 返回主页");
+    private final Button backButton = new Button("← 返回");
     private final Button copyIdButton = new Button("复制 ID");
     private final VBox passwordSection = new VBox(6);
     private final TextField newPasswordField = new TextField();
@@ -41,17 +49,45 @@ public final class RoomView extends VBox {
         heading.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         var idBox = new HBox(8, roomIdLabel, copyIdButton);
-        var infoBox = new VBox(4, roomNameLabel, idBox, roleLabel, selfVipLabel, capacityLabel);
+        var infoGrid = new GridPane();
+        infoGrid.setHgap(10);
+        infoGrid.setVgap(4);
+        infoGrid.add(new Label("房间名称:"), 0, 0);
+        infoGrid.add(roomNameLabel, 1, 0);
+        infoGrid.add(new Label("我的角色:"), 0, 1);
+        infoGrid.add(roleLabel, 1, 1);
+        infoGrid.add(new Label("创建时间:"), 0, 2);
+        infoGrid.add(createdAtLabel, 1, 2);
+        infoGrid.add(new Label("容量:"), 0, 3);
+        infoGrid.add(capacityLabel, 1, 3);
 
-        memberList.setPrefHeight(180);
-        var membersHeading = new Label("成员列表:");
-        membersHeading.setStyle("-fx-font-weight: bold;");
+        var infoBox = new VBox(4, idBox, infoGrid);
+        infoBox.setStyle("-fx-border-color: #ccc; -fx-border-radius: 6; -fx-padding: 10;");
 
-        var sendBox = new HBox(8, messageField);
-        messageField.setPromptText("输入消息（回车发送）");
-        HBox.setHgrow(messageField, javafx.scene.layout.Priority.ALWAYS);
+        var netHeading = new Label("网络信息");
+        netHeading.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        var netGrid = new GridPane();
+        netGrid.setHgap(10);
+        netGrid.setVgap(4);
+        netGrid.add(new Label("局域网 IP:"), 0, 0);
+        netGrid.add(lanIpLabel, 1, 0);
+        netGrid.add(new Label("本地端口:"), 0, 1);
+        netGrid.add(localPortLabel, 1, 1);
+        netGrid.add(new Label("公网地址:"), 0, 2);
+        netGrid.add(publicAddrLabel, 1, 2);
+        netGrid.add(new Label("NAT 类型:"), 0, 3);
+        netGrid.add(natTypeLabel, 1, 3);
+        netGrid.add(new Label("可达性:"), 0, 4);
+        netGrid.add(reachabilityLabel, 1, 4);
 
-        var pwHeading = new Label("修改房间密码:");
+        var netBox = new VBox(6, netHeading, netGrid);
+        netBox.setStyle("-fx-border-color: #ccc; -fx-border-radius: 6; -fx-padding: 10;");
+
+        memberList.setPrefHeight(140);
+        var membersHeading = new Label("成员列表");
+        membersHeading.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+        var pwHeading = new Label("修改房间密码");
         pwHeading.setStyle("-fx-font-weight: bold;");
         newPasswordField.setPromptText("输入新密码");
         var pwBox = new HBox(8, newPasswordField, changePasswordButton);
@@ -62,17 +98,16 @@ public final class RoomView extends VBox {
 
         var bottomBox = new HBox(8, backButton, actionButton);
 
-        getChildren().addAll(heading, infoBox, membersHeading, memberList, sendBox, passwordSection, bottomBox);
+        getChildren().addAll(heading, infoBox, netBox, membersHeading, memberList, passwordSection, bottomBox);
     }
 
     public void setRoomInfo(String name, UUID id, String handle, String selfVip, int memberCount, int maxDevices, boolean isOwner) {
         this.currentRoomId = id;
         this.currentHandle = handle;
-        roomNameLabel.setText("房间名称: " + name);
+        roomNameLabel.setText(name);
         roomIdLabel.setText("房间 ID: " + handle);
-        roleLabel.setText("我的角色: " + (isOwner ? "房主 👑" : "成员"));
-        selfVipLabel.setText("本机虚拟 IP: " + selfVip);
-        capacityLabel.setText("容量: " + memberCount + " / " + maxDevices);
+        roleLabel.setText(isOwner ? "房主 👑" : "成员");
+        capacityLabel.setText(memberCount + " / " + maxDevices + " 台设备");
         actionButton.setText(isOwner ? "关闭房间" : "离开房间");
         passwordSection.setVisible(isOwner);
         passwordSection.setManaged(isOwner);
@@ -81,22 +116,29 @@ public final class RoomView extends VBox {
         }
     }
 
+    public void setCreatedAt(long timestamp) {
+        var fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+        createdAtLabel.setText(fmt.format(Instant.ofEpochMilli(timestamp)));
+    }
+
+    public void setNetworkDetails(String lanIp, int localPort, String publicAddr, String natType, boolean hasPublicAddress) {
+        lanIpLabel.setText(lanIp != null ? lanIp : "未检测");
+        localPortLabel.setText(localPort > 0 ? String.valueOf(localPort) : "未启动");
+        publicAddrLabel.setText(publicAddr != null ? publicAddr : "无");
+        natTypeLabel.setText(natType != null ? natType : "未知");
+        if (hasPublicAddress) {
+            reachabilityLabel.setText("✅ 公网可达（跨局域网可加入）");
+            reachabilityLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+        } else {
+            reachabilityLabel.setText("⚠ 仅局域网可达");
+            reachabilityLabel.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
+        }
+    }
+
     public void setMembers(Collection<String> members, String ownerId) {
         memberItems.setAll(members.stream()
                 .map(m -> m.equals(ownerId) ? "👑 " + m + " (房主)" : m)
                 .toList());
-    }
-
-    public void onSend(javafx.event.EventHandler<javafx.scene.input.KeyEvent> handler) {
-        messageField.setOnKeyPressed(handler);
-    }
-
-    public String messageText() {
-        return messageField.getText();
-    }
-
-    public void clearMessage() {
-        messageField.clear();
     }
 
     public void onAction(Runnable handler) {
