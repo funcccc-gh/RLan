@@ -77,17 +77,15 @@ public final class MainView extends VBox {
         var btn = new Button("加入房间");
         btn.setOnAction(e -> {
             if (onJoinRoom != null) {
-                UUID id = null;
-                try {
-                    id = UUID.fromString(joinIdField.getText().trim());
-                } catch (IllegalArgumentException ex) {
-                    statusLabel.setText("房间 ID 格式无效");
+                var idText = joinIdField.getText().trim();
+                if (idText.isEmpty()) {
+                    statusLabel.setText("房间 ID 不能为空");
                     return;
                 }
                 onJoinRoom.accept(new RoomRequest(
                         null,
                         joinPasswordField.getText(),
-                        id));
+                        idText));
             }
         });
 
@@ -121,9 +119,9 @@ public final class MainView extends VBox {
     public static final class RoomRequest {
         public final String name;
         public final String password;
-        public final UUID roomId;
+        public final String roomId;
 
-        public RoomRequest(String name, String password, UUID roomId) {
+        public RoomRequest(String name, String password, String roomId) {
             this.name = name;
             this.password = password;
             this.roomId = roomId;

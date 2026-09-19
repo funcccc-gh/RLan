@@ -64,6 +64,42 @@ public final class StunClient {
         }
     }
 
+    public InetSocketAddress query(DatagramChannel channel, InetSocketAddress stunServer, long timeoutMillis) throws Exception {
+        byte[] transactionId = new byte[12];
+        random.nextBytes(transactionId);
+
+        var latch = new CountDownLatch(1);
+        var result = new AtomicReference<InetSocketAddress>();
+
+        var stunHandler = new SimpleChannelInboundHandler<DatagramPacket>() {
+            @Override
+            protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) {
+                var buf = msg.content();
+                if (buf.readableBytes() >= 2 && buf.getShort(buf.readerIndex()) == BINDING_RESPONSE) {
+                    var addr = parseResponse(buf, transactionId);
+                    if (addr != null) {
+                        result.set(addr);
+                        latch.countDown();
+                        return;
+                    }
+                }
+                ctx.fireChannelRead(msg.retain());
+            }
+        };
+
+        channel.pipeline().addFirst(stunHandler);
+        channel.writeAndFlush(new DatagramPacket(buildBindingRequest(transactionId), stunServer));
+
+        try {
+            if (!latch.await(timeoutMillis, TimeUnit.MILLISECONDS)) {
+                throw new IllegalStateException("STUN 查询超时");
+            }
+            return result.get();
+        } finally {
+            channel.pipeline().remove(stunHandler);
+        }
+    }
+
     private ByteBuf buildBindingRequest(byte[] transactionId) {
         var buf = Unpooled.buffer(20);
         buf.writeShort(BINDING_REQUEST);

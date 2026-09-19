@@ -6,12 +6,13 @@ import io.netty.channel.socket.DatagramPacket;
 import rlan.protocol.MessageType;
 import rlan.protocol.Packet;
 
-import java.util.function.Consumer;
+import java.net.InetSocketAddress;
+import java.util.function.BiConsumer;
 
 public final class P2pMessageHandler extends SimpleChannelInboundHandler<DatagramPacket> {
-    private final Consumer<Packet> onMessage;
+    private final BiConsumer<Packet, InetSocketAddress> onMessage;
 
-    public P2pMessageHandler(Consumer<Packet> onMessage) {
+    public P2pMessageHandler(BiConsumer<Packet, InetSocketAddress> onMessage) {
         this.onMessage = onMessage;
     }
 
@@ -26,6 +27,6 @@ public final class P2pMessageHandler extends SimpleChannelInboundHandler<Datagra
         if (typeIndex >= types.length) return;
         byte[] payload = new byte[length];
         buf.readBytes(payload);
-        onMessage.accept(new Packet(types[typeIndex], payload));
+        onMessage.accept(new Packet(types[typeIndex], payload), msg.sender());
     }
 }

@@ -9,7 +9,7 @@ import rlan.net.stun.StunClient;
 import rlan.protocol.Packet;
 
 import java.net.InetSocketAddress;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public final class ConnectionManager {
     private final Config config;
@@ -38,18 +38,17 @@ public final class ConnectionManager {
         return publicAddress;
     }
 
-    public void start(Consumer<Packet> onMessage) throws InterruptedException {
+    public void start(BiConsumer<Packet, InetSocketAddress> onMessage) throws InterruptedException {
         this.endpoint = new P2pEndpoint(group, config.listenPort(), new P2pMessageHandler(onMessage));
     }
 
     public InetSocketAddress discoverPublicAddress(InetSocketAddress stunServer) throws Exception {
-        var stun = new StunClient();
-        try {
-            this.publicAddress = stun.query(stunServer, 5000);
-            return publicAddress;
-        } finally {
-            stun.close();
+        if (endpoint == null) {
+            throw new IllegalStateException("ConnectionManager 未启动");
         }
+        var stun = new StunClient();
+        this.publicAddress = stun.query(endpoint.channel(), stunServer, 5000);
+        return publicAddress;
     }
 
     public void send(Packet packet, InetSocketAddress target) {
