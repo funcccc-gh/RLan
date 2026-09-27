@@ -1,11 +1,10 @@
 plugins {
     java
     application
-    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 group = "rlan"
-version = "0.3.0"
+version = "0.1.0"
 
 repositories {
     maven { url = uri("https://maven.aliyun.com/repository/public") }
@@ -27,11 +26,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-javafx {
-    version = "21"
-    modules = listOf("javafx.controls", "javafx.fxml")
-}
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -43,7 +37,7 @@ application {
 }
 
 tasks.jar {
-    archiveClassifier.set("all")
+    archiveClassifier.set("server")
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude("module-info.class")

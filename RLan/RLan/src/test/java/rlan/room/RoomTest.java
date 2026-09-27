@@ -45,7 +45,7 @@ class RoomTest {
     @Test
     void isFull_达到8人时为满() {
         var room = new Room(java.util.UUID.randomUUID(), "test", Room.hash("p"), "owner");
-        for (int i = 0; i < Room.MAX_DEVICES; i++) {
+        for (int i = 0; i < Room.DEFAULT_MAX_DEVICES; i++) {
             room.join("user" + i);
         }
         assertThat(room.isFull()).isTrue();

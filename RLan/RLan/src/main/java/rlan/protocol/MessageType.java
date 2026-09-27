@@ -7,5 +7,6 @@ public enum MessageType {
     DATA,
     KEEPALIVE,
     CHAT,
-    FILE
+    FILE,
+    AUDIO
 }

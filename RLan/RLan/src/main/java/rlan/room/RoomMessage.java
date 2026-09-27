@@ -13,7 +13,12 @@ public final class RoomMessage {
         JOIN_ACK,
         JOIN_NAK,
         MEMBER_LIST,
-        ROOM_MIGRATED
+        ROOM_MIGRATED,
+        KICK,
+        MUTE,
+        ROOM_CLOSED,
+        MEMBER_JOINED,
+        MEMBER_LEFT
     }
 
     private final Type type;

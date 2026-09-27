@@ -9,7 +9,11 @@ public final class RoomManager {
     private final ConcurrentMap<UUID, Room> rooms = new ConcurrentHashMap<>();
 
     public Room create(String name, String password, String ownerId) {
-        var room = new Room(UUID.randomUUID(), name, Room.hash(password), ownerId);
+        return create(name, password, ownerId, UUID.randomUUID());
+    }
+
+    public Room create(String name, String password, String ownerId, UUID roomId) {
+        var room = new Room(roomId, name, Room.hash(password), ownerId);
         rooms.put(room.id(), room);
         room.join(ownerId);
         return room;

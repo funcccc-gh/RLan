@@ -41,7 +41,7 @@ class RoomManagerTest {
     void join_房间满返回ROOM_FULL() {
         var mgr = new RoomManager();
         var room = mgr.create("room1", "pass", "owner1");
-        for (int i = 1; i < Room.MAX_DEVICES; i++) {
+        for (int i = 1; i < Room.DEFAULT_MAX_DEVICES; i++) {
             mgr.join(room.id(), "pass", "user" + i);
         }
         var result = mgr.join(room.id(), "pass", "overflow");
